@@ -1,0 +1,11 @@
+[Unit]
+Description=Executa o watchdog do SUPER_TRADER_QUANT periodicamente
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+AccuracySec=30s
+Unit=super-trader-quant-watchdog.service
+
+[Install]
+WantedBy=timers.target

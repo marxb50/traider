@@ -1,0 +1,22 @@
+[Unit]
+Description=SUPER_TRADER_QUANT Watchdog
+After=network.target super-trader-quant-scheduler.service
+
+[Service]
+Type=oneshot
+User=supertrader
+WorkingDirectory=/opt/super_trader_quant
+EnvironmentFile=/opt/super_trader_quant/.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/super_trader_quant/.venv/bin/python -m scripts.watchdog_once --strict
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/super_trader_quant/data /opt/super_trader_quant/logs
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true

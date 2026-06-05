@@ -1,0 +1,44 @@
+services:
+  api:
+    build: ..
+    container_name: super_trader_quant_api
+    command: python -m scripts.run_api
+    env_file:
+      - ../.env
+    environment:
+      API_HOST: 0.0.0.0
+    volumes:
+      - ../data:/app/data
+      - ../logs:/app/logs
+    ports:
+      - "127.0.0.1:8010:8010"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8010/health').read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  scheduler:
+    build: ..
+    container_name: super_trader_quant_scheduler
+    command: python -m scripts.run_scheduler
+    env_file:
+      - ../.env
+    volumes:
+      - ../data:/app/data
+      - ../logs:/app/logs
+    restart: unless-stopped
+
+  watchdog:
+    build: ..
+    container_name: super_trader_quant_watchdog
+    command: python -m scripts.run_watchdog_loop
+    env_file:
+      - ../.env
+    volumes:
+      - ../data:/app/data
+      - ../logs:/app/logs
+    depends_on:
+      - scheduler
+    restart: unless-stopped

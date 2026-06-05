@@ -1,0 +1,44 @@
+BRAZIL_ASSETS = [
+    "PETR4.SA", "VALE3.SA", "ITUB4.SA", "BBDC4.SA", "ABEV3.SA", "WEGE3.SA", "PRIO3.SA", "BBAS3.SA",
+    "B3SA3.SA", "ENEV3.SA", "PSSA3.SA", "SUZB3.SA", "RENT3.SA", "RADL3.SA", "EQTL3.SA", "SAPR11.SA",
+    "GGBR4.SA", "CSNA3.SA", "CSAN3.SA", "LREN3.SA", "RAIZ4.SA", "VIVT3.SA", "TIMS3.SA", "KLBN11.SA",
+    "FLRY3.SA", "UGPA3.SA", "CMIG4.SA", "RAPT4.SA", "SANB11.SA", "HAPV3.SA", "COGN3.SA", "CYRE3.SA",
+    "MRVE3.SA", "MULT3.SA", "BRKM5.SA", "USIM5.SA", "GOAU4.SA", "TAEE11.SA", "ENGI11.SA", "SLCE3.SA",
+    "SMTO3.SA", "TOTS3.SA", "MGLU3.SA", "YDUQ3.SA", "ALPA4.SA", "VAMO3.SA", "ASAI3.SA", "CMIN3.SA",
+    "CPFE3.SA", "EGIE3.SA", "PETR3.SA", "BBDC3.SA", "ITSA4.SA", "SBSP3.SA", "BPAC11.SA", "HYPE3.SA",
+    "IGTI11.SA", "BEEF3.SA", "CMIG3.SA", "CPLE3.SA", "SBFG3.SA", "RAIL3.SA", "SMFT3.SA", "PCAR3.SA",
+    "VIVA3.SA", "GMAT3.SA", "CEAB3.SA", "BRAP4.SA", "AZZA3.SA", "DIRR3.SA", "CURY3.SA", "EZTC3.SA",
+    "EVEN3.SA", "TEND3.SA", "JHSF3.SA", "ALOS3.SA", "CSMG3.SA", "POMO4.SA", "FRAS3.SA", "KEPL3.SA",
+    "ROMI3.SA", "TUPY3.SA", "LEVE3.SA", "MILS3.SA", "ARML3.SA", "ODPV3.SA", "QUAL3.SA", "ONCO3.SA",
+    "RDOR3.SA", "LWSA3.SA", "CASH3.SA", "VBBR3.SA", "AURE3.SA", "ANIM3.SA", "SEER3.SA", "CVCB3.SA",
+    "ECOR3.SA", "DXCO3.SA", "ALUP11.SA", "RANI3.SA",
+]
+
+US_ASSETS = [
+    "AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSLA", "BRK-B", "JPM", "V",
+    "MA", "UNH", "XOM", "JNJ", "PG", "HD", "COST", "AVGO", "ORCL", "CRM",
+    "NFLX", "AMD", "QCOM", "KO", "PEP", "MRK", "ABBV", "BAC", "WMT", "DIS",
+    "CSCO", "ADBE", "TMO", "MCD", "NKE", "INTC", "TXN", "LIN", "ACN", "IBM",
+    "GE", "CAT", "BA", "GS", "MS", "SPY", "QQQ", "IWM", "DIA", "TLT",
+]
+
+UK_ASSETS = [
+    "BP.L", "SHEL.L", "HSBA.L", "AZN.L", "VOD.L", "GSK.L", "LLOY.L", "BARC.L", "ULVR.L", "RIO.L",
+    "DGE.L", "REL.L", "NG.L", "LSEG.L", "BATS.L", "IMB.L", "AAL.L", "ANTO.L", "PRU.L", "STAN.L",
+    "NWG.L", "RR.L", "BA.L", "SSE.L", "EXPN.L", "HLMA.L", "CRH.L", "CCH.L", "RKT.L", "SN.L",
+    "MNDI.L", "SGRO.L", "LAND.L", "JD.L", "AUTO.L", "PSN.L", "BKG.L", "WPP.L", "III.L", "INF.L",
+    "SMT.L", "SDR.L", "EZJ.L", "IAG.L", "CNA.L", "TSCO.L", "SBRY.L", "ABF.L", "BNZL.L", "FRES.L",
+]
+
+DEMO_ASSETS_BY_MARKET = {
+    "BR": BRAZIL_ASSETS,
+    "US": US_ASSETS,
+    "UK": UK_ASSETS,
+}
+
+EXPECTED_ASSETS_BY_MARKET = {
+    market: len(symbols)
+    for market, symbols in DEMO_ASSETS_BY_MARKET.items()
+}
+
+EXPECTED_ASSET_COUNT = sum(EXPECTED_ASSETS_BY_MARKET.values())

@@ -1,0 +1,27 @@
+[Unit]
+Description=SUPER_TRADER_QUANT Scheduler
+After=network.target
+
+[Service]
+Type=simple
+User=supertrader
+WorkingDirectory=/opt/super_trader_quant
+EnvironmentFile=/opt/super_trader_quant/.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/super_trader_quant/.venv/bin/python -m scripts.run_scheduler
+Restart=always
+RestartSec=10
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/super_trader_quant/data /opt/super_trader_quant/logs
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target
