@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     notification_batch_size: int = 100
     immediate_notification_batch_size: int = 5000
     max_open_signal_age_days: int = 30
+    watchdog_stale_open_signals_alert_min_count: int = 5
     max_pending_notification_age_minutes: int = 30
     watchdog_interval_minutes: int = 5
     watchdog_alert_dedupe_minutes: int = 60

@@ -55,7 +55,7 @@ MVP em Python para **paper trading** de swing/position trade com scanner de setu
 - Modo multi-timeframe para swing trade: entrada em `H1`/60 minutos com filtro de contexto em `D1` diário e `W1` semanal.
 - Scheduler para execução contínua, com ciclo inicial no boot, heartbeat operacional e trava exclusiva para evitar duas instâncias ao mesmo tempo.
 - Envio Telegram imediato no ciclo do scanner/resolvedor, com lote alto próprio para não deixar sinais recém-criados esperando o job periódico; se o Telegram estiver indisponível, o alerta permanece na outbox para nova tentativa.
-- Watchdog operacional para avisar no Telegram quando o scheduler parar, a fila travar, a memória ficar inconsistente ou o universo esperado (BR=100, US=50, UK=50) sair do esperado.
+- Watchdog operacional para avisar no Telegram quando o scheduler parar, a fila travar, a memória ficar inconsistente ou o universo esperado (BR=100, US=50, UK=50) sair do esperado; sinais abertos velhos isolados entram como aviso interno e só viram alerta quando atingem `WATCHDOG_STALE_OPEN_SIGNALS_ALERT_MIN_COUNT`.
 - Watchdog com janela de graça no startup para evitar falso alerta durante restart curto do scheduler.
 - Backup consistente do SQLite antes de manutenção/deploy.
 - Manutenção operacional com backup, retenção segura de notificações antigas e rotação de backups, sem apagar sinais nem memória histórica.

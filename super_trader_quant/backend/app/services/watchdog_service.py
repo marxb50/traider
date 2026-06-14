@@ -51,6 +51,7 @@ def collect_watchdog_report(session: Session, *, strict: bool = False) -> dict[s
     ) * 60 * 2
 
     issues: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
     if len(active_assets) != EXPECTED_ASSET_COUNT:
         issues.append(_issue("active_asset_count", f"Ativos ativos: {len(active_assets)}; esperado: {EXPECTED_ASSET_COUNT}."))
     if active_assets_by_market != EXPECTED_ASSETS_BY_MARKET:
@@ -70,8 +71,22 @@ def collect_watchdog_report(session: Session, *, strict: bool = False) -> dict[s
                 f"Heartbeat velho ou inválido: {heartbeat_age_seconds}s; limite: {heartbeat_max_age_seconds}s.",
             )
         )
-    if ops_metrics["stale_open_signals"]:
-        issues.append(_issue("stale_open_signals", f"Sinais abertos velhos: {ops_metrics['stale_open_signals']}."))
+    stale_open_signals = int(ops_metrics.get("stale_open_signals") or 0)
+    stale_open_signal_alert_min_count = max(settings.watchdog_stale_open_signals_alert_min_count, 1)
+    if stale_open_signals >= stale_open_signal_alert_min_count:
+        issues.append(
+            _issue(
+                "stale_open_signals",
+                f"Sinais abertos velhos: {stale_open_signals}; limiar: {stale_open_signal_alert_min_count}.",
+            )
+        )
+    elif stale_open_signals:
+        warnings.append(
+            _issue(
+                "stale_open_signals",
+                f"Sinais abertos velhos abaixo do limiar de alerta: {stale_open_signals}/{stale_open_signal_alert_min_count}.",
+            )
+        )
     if ops_metrics["stale_pending_notifications"]:
         issues.append(
             _issue(
@@ -108,6 +123,7 @@ def collect_watchdog_report(session: Session, *, strict: bool = False) -> dict[s
         "strict": strict,
         "checked_at": utc_now_naive().isoformat(),
         "issues": issues,
+        "warnings": warnings,
         "active_assets": len(active_assets),
         "expected_active_assets": EXPECTED_ASSET_COUNT,
         "active_assets_by_market": active_assets_by_market,
@@ -135,6 +151,11 @@ def format_watchdog_message(report: dict[str, object]) -> str:
         lines.append("problemas:")
         for issue in issues:
             lines.append(f"- {issue['code']}: {issue['message']}")
+    warnings = report.get("warnings") or []
+    if warnings:
+        lines.append("avisos:")
+        for warning in warnings:
+            lines.append(f"- {warning['code']}: {warning['message']}")
     return "\n".join(lines)
 
 

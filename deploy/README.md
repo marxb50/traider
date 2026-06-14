@@ -18,7 +18,7 @@ Isso evita misturar processo, banco, logs e configuração com outros serviços 
 
 O scheduler também usa uma trava de processo. Se por erro operacional duas instâncias forem iniciadas, a segunda encerra sem escanear mercado nem duplicar alertas.
 
-O watchdog roda a cada 5 minutos no VPS e gera alerta Telegram quando encontra scheduler sem heartbeat fresco, sinais velhos, fila Telegram travada, falha de notificação, memória inconsistente ou universo diferente do esperado (100 BR, 50 US e 50 UK).
+O watchdog roda a cada 5 minutos no VPS e gera alerta Telegram quando encontra scheduler sem heartbeat fresco, fila Telegram travada, falha de notificação, memória inconsistente ou universo diferente do esperado (100 BR, 50 US e 50 UK). Sinais abertos velhos isolados ficam como aviso interno; eles só viram alerta Telegram quando chegam ao limiar `WATCHDOG_STALE_OPEN_SIGNALS_ALERT_MIN_COUNT`.
 Ele respeita `SCHEDULER_STARTUP_GRACE_SECONDS` para não marcar restart curto como “startup travado” cedo demais.
 
 O scheduler também executa manutenção operacional diária. Essa manutenção cria backup, rotaciona backups antigos do padrão `super_trader_quant-*.db` e remove apenas notificações antigas já encerradas (`sent`/`failed`), preservando sinais, memória histórica e notificações pendentes.

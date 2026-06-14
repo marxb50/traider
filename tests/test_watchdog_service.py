@@ -138,6 +138,79 @@ def test_watchdog_report_flags_resource_guard_issues(monkeypatch):
     assert "database_size_exceeded" in codes
 
 
+def test_watchdog_report_keeps_low_stale_open_signal_count_as_warning(monkeypatch):
+    engine = create_engine("sqlite://")
+    SQLModel.metadata.create_all(engine)
+    heartbeat = {
+        "last_event": "scan_job",
+        "last_seen_at": utc_now_naive().isoformat(),
+    }
+    monkeypatch.setattr(watchdog_service, "read_scheduler_heartbeat", lambda: heartbeat)
+    monkeypatch.setattr(watchdog_service.settings, "max_open_signal_age_days", 30)
+    monkeypatch.setattr(watchdog_service.settings, "watchdog_stale_open_signals_alert_min_count", 5)
+
+    with Session(engine) as session:
+        _add_expected_assets(session)
+        session.add(
+            Signal(
+                asset_symbol="BR00",
+                market="BR",
+                strategy="IFR2",
+                timeframe="D1",
+                signal_time=utc_now_naive() - timedelta(days=31),
+                entry=10,
+                stop=9,
+                target=12,
+            )
+        )
+        session.commit()
+        report = watchdog_service.collect_watchdog_report(session)
+
+    assert report["ok"] is True
+    assert report["issues"] == []
+    assert report["warnings"] == [
+        {
+            "code": "stale_open_signals",
+            "message": "Sinais abertos velhos abaixo do limiar de alerta: 1/5.",
+        }
+    ]
+
+
+def test_watchdog_report_flags_stale_open_signal_count_over_threshold(monkeypatch):
+    engine = create_engine("sqlite://")
+    SQLModel.metadata.create_all(engine)
+    heartbeat = {
+        "last_event": "scan_job",
+        "last_seen_at": utc_now_naive().isoformat(),
+    }
+    monkeypatch.setattr(watchdog_service, "read_scheduler_heartbeat", lambda: heartbeat)
+    monkeypatch.setattr(watchdog_service.settings, "max_open_signal_age_days", 30)
+    monkeypatch.setattr(watchdog_service.settings, "watchdog_stale_open_signals_alert_min_count", 5)
+
+    with Session(engine) as session:
+        _add_expected_assets(session)
+        for index in range(5):
+            session.add(
+                Signal(
+                    asset_symbol=f"BR{index:02d}",
+                    market="BR",
+                    strategy="IFR2",
+                    timeframe="D1",
+                    signal_time=utc_now_naive() - timedelta(days=31),
+                    entry=10,
+                    stop=9,
+                    target=12,
+                )
+            )
+        session.commit()
+        report = watchdog_service.collect_watchdog_report(session)
+
+    codes = {issue["code"] for issue in report["issues"]}
+    assert report["ok"] is False
+    assert "stale_open_signals" in codes
+    assert report["warnings"] == []
+
+
 def test_watchdog_notification_is_deduplicated(monkeypatch):
     engine = create_engine("sqlite://")
     SQLModel.metadata.create_all(engine)
